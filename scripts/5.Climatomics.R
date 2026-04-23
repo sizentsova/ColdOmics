@@ -4,7 +4,7 @@ library(readxl)
 # -----------------------------
 # 1. Load data
 # -----------------------------
-mutation_dt <- fread(snakemake@input[["variants_alt_genotype"]])
+mutation_dt <- fread(snakemake@input[["alt"]])
                      
 temperature_dt <- as.data.table(
   read_xlsx(snakemake@input[["CHELSA_temperature_data"]], sheet = 1)
@@ -113,4 +113,4 @@ gene_results <- rbindlist(lapply(names(gene_list), function(gene)  {
 # -----------------------------
 final_results <- rbindlist(list(global_results, gene_results))
 
-fwrite(final_results, snakemake@output[["MC_climate_table"]])
+fwrite(final_results, snakemake@output[["mc"]])
