@@ -1,0 +1,12 @@
+name: bcftools_env
+
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+
+dependencies:
+  - bcftools
+  - htslib
+
+

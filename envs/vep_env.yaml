@@ -1,0 +1,13 @@
+name: vep_env
+
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+
+dependencies:
+  - ensembl-vep
+  - perl
+  - perl-db-file
+  - perl-dbi
+  - perl-dbd-sqlite

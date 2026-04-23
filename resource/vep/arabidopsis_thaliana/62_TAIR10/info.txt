@@ -1,0 +1,9 @@
+species	arabidopsis_thaliana
+assembly	TAIR10
+sift	b
+polyphen	
+source_assembly	TAIR10
+source_genebuild	Araport11
+source_sift	sift5.2.2
+variation_cols	chr,variation_name,failed,somatic,start,end,allele_string,strand,clin_sig,phenotype_or_disease,clin_sig_allele,clinical_impact,pubmed,var_synonyms
+var_type	tabix
