@@ -171,4 +171,4 @@ tf_final_table <- Reduce(function(x, y) {
 # -------------------------
 # 12. Save result
 # -------------------------
-fwrite(tf_final_table, snakemake@output[["robustTF_pval"]])
+fwrite(tf_final_table, snakemake@output[["tf_enrichment"]])

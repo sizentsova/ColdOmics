@@ -7,7 +7,7 @@ library(readxl)
 mutation_dt <- fread(snakemake@input[["alt"]])
                      
 temperature_dt <- as.data.table(
-  read_xlsx(snakemake@input[["CHELSA_temperature_data"]], sheet = 1)
+  read_xlsx(snakemake@input[["CHELSA_temperature"]], sheet = 1)
 )
 
 setnames(

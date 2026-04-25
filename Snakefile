@@ -4,7 +4,8 @@
 
 rule all:
     input:
-        "results/climatomics/Monte-Carlo_permutation_robustTF.csv"
+        "results/climatomics/Monte-Carlo_permutation_robustTF.csv",
+        "data/cistromics/ciscross.complete"
 
 
 ########################################
@@ -28,7 +29,33 @@ rule transcriptomics:
     script:
         "scripts/1.Transcriptomics.R"
 
+rule prepare_ciscross:
+    input:
+        deg=expand(
+            "results/transcriptomics/{col}.csv",
+            col=["upER","upLR","upVR","downER","downLR","downVR"]
+        )
+    output:
+        flag="data/cistromics/ciscross.complete"
+    message:
+        "Waiting for manual cistromics step (max 30 min)..."
+    shell:
+        """
+        for i in {{1..60}}; do
+            if [ -f {output.flag} ]; then
+                echo "Found ciscross.complete"
+                exit 0
+            fi
+            echo "Waiting for data/cistromics/ciscross.complete... ($i/60)"
+            sleep 30
+        done
 
+        echo ""
+        echo "Timeout after 5 minutes."
+        echo "Please complete manual step:"
+        echo "  touch data/cistromics/ciscross.complete"
+        exit 1
+        """
 ########################################
 # 2. CISTROMICS (TF enrichment)
 ########################################
@@ -37,7 +64,8 @@ rule cistromics:
     input:
         threshold="results/transcriptomics/binomial_threshold.txt",
         count_table="results/transcriptomics/robustDEG.csv",
-        ciscross_dir="data/cistromics"
+        ciscross_dir="data/cistromics",
+        flag="data/cistromics/ciscross.complete"
     output:
         tf_enrichment="results/cistromics/tf_cis_enrichment.csv"
     conda:
@@ -147,7 +175,8 @@ rule extract_variant_genotypes:
 
 rule climatomics:
     input:
-        alt="results/genomics/tf_variants_genotype_alt.csv"
+        alt="results/genomics/tf_variants_genotype_alt.csv",
+        CHELSA_temperature="data/climatomics/CHELSA_min_temp_ALL_1058_accessions.xlsx"
     output:
         mc="results/climatomics/Monte-Carlo_permutation_robustTF.csv"
     conda:
