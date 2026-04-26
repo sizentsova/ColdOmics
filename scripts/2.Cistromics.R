@@ -73,7 +73,7 @@ tf_raw_list <- load_ciscross(snakemake@input[["ciscross_dir"]])
 tf_filtered_list <- lapply(tf_raw_list, function(dt) {
   
   # Filter by adjusted p-value
-  dt <- dt[dt[["adjusted p_value"]] < 0.05, ]
+  dt <- dt[dt[["adjusted p-value"]] < 0.05, ]
   
   # Standardize column name
   setnames(dt, "TAIR ID", "TAIR_ID")
@@ -158,7 +158,7 @@ tf_tables <- Map(function(dt, nm) {
   
   dt <- as.data.table(dt)
   
-  setnames(dt, c("TAIR ID", "adjusted p_value"), c("TAIR_ID", nm))
+  setnames(dt, c("TAIR ID", "adjusted p-value"), c("TAIR_ID", nm))
   
   dt
   

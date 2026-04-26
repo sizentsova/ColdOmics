@@ -29,6 +29,11 @@ rule transcriptomics:
     script:
         "scripts/1.Transcriptomics.R"
 
+########################################
+# 2. CISTROMICS (Manual data upload)
+########################################
+
+
 rule prepare_ciscross:
     input:
         deg=expand(
@@ -51,7 +56,7 @@ rule prepare_ciscross:
         done
 
         echo ""
-        echo "Timeout after 5 minutes."
+        echo "Timeout after 30 minutes."
         echo "Please complete manual step:"
         echo "  touch data/cistromics/ciscross.complete"
         exit 1
@@ -143,6 +148,7 @@ rule annotate_variants:
             --cache_version 62 \
             --species arabidopsis_thaliana \
             --vcf \
+            --no-stats \
             --force_overwrite \
             --variant_class \
             --o stdout \
