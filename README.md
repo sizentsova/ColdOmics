@@ -238,7 +238,7 @@ data/cistromics/
 
 #### B. Regulatory Network Results
 
-Download:
+From the CisCross website, manually copy the information from the following result tables:
 
 * "Connected TF regulators"
 
@@ -259,16 +259,16 @@ data/regulomics/
 
 ---
 
-### Step 4: Signal Completion
+### C. Signal Completion
 
-After placing all files:
+After placing all files run:
 
 ```bash
 touch data/cistromics/ciscross_TF.complete
 touch data/regulomics/ciscross_network.complete
 ```
 
-The pipeline will wait up to **30 minutes** for these files.
+The snakemake pipeline will wait up to **30 minutes** for these files.
 
 ---
 
