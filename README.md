@@ -202,12 +202,12 @@ For each response phase:
 
 For each phase (ER, LR, VR):
 
-A. TF Enrichment Results
+### 2. Cistromics (TF enrichment)
 
 From the CisCross website, manually copy the information from the following result tables:
 
-List of enriched TF on UP genes
-List of enriched TF on DOWN genes
+* List of enriched TF on UP genes
+* List of enriched TF on DOWN genes
 Instructions
 Open each result page in the CisCross output.
 Copy the full table content (including all rows and columns) from the website.
