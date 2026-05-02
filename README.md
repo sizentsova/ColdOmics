@@ -240,7 +240,7 @@ data/cistromics/
 
 From the CisCross website, manually copy the information from the following result tables:
 
-* "Connected TF regulators"
+* Connected TF regulators
 
 Save as CSV files in:
 
