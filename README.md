@@ -84,13 +84,13 @@ results/
 ### Requirements
 
 * Snakemake (≥7)
-* Conda or Mamba
+* Conda
 
 ### Setup
 
 ```bash
-git clone <your-repo-url>
-cd <repo>
+git clone git@github.com:sizentsova/ColdOmics.git>
+cd ColdOmics
 ```
 
 Run with automatic environment creation:
@@ -154,7 +154,7 @@ data/genomics/1001genomes_snp-short-indel_only_ACGTN.vcf.gz
 
 ---
 
-## ⚠️ Manual Step: CisCross TF Network Analysis
+## Manual Step: CisCross TF Network Analysis
 
 This pipeline requires manual interaction with the CisCross web tool:
 
