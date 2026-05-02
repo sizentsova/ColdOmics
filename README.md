@@ -96,13 +96,13 @@ cd ColdOmics
 Run with automatic environment creation:
 
 ```bash
-snakemake --use-conda --cores <N>
+snakemake --use-conda --cores N
 ```
 
 Example:
 
 ```bash
-snakemake --use-conda --cores 8
+snakemake --use-conda --cores 4
 ```
 
 ---
@@ -202,14 +202,20 @@ For each response phase:
 
 For each phase (ER, LR, VR):
 
-#### A. TF Enrichment Results
+A. TF Enrichment Results
 
-Download:
+From the CisCross website, manually copy the information from the following result tables:
 
-* "List of enriched TF on UP Genes"
-* "List of enriched TF on Down Genes"
+List of enriched TF on UP genes
+List of enriched TF on DOWN genes
+Instructions
+Open each result page in the CisCross output.
+Copy the full table content (including all rows and columns) from the website.
+Paste the data into a spreadsheet editor (e.g., Excel or Google Sheets).
+Save each table as a CSV file.
+File organization
 
-Save as CSV files in:
+Save all CSV files in the following directory:
 
 ```
 data/cistromics/
