@@ -259,7 +259,7 @@ data/regulomics/
 
 ---
 
-### C. Signal Completion
+### Step 4. Signal Completion
 
 After placing all files run:
 
