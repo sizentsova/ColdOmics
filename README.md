@@ -89,7 +89,7 @@ results/
 ### Setup
 
 ```bash
-git clone git@github.com:sizentsova/ColdOmics.git>
+git clone git@github.com:sizentsova/ColdOmics.git
 cd ColdOmics
 ```
 
