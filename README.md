@@ -111,7 +111,7 @@ snakemake --use-conda --cores 4
 
 ```
 data/
-├── transcriptomics/
+├── transcriptomics/   # DEGs extracted from RNA-seq and microarray transcriptoms
 ├── cistromics/        # CisCross TF enrichment and network results
 ├── genomics/
 │   └── 1001genomes_snp-short-indel_only_ACGTN.vcf.gz
