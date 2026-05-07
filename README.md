@@ -212,18 +212,19 @@ data/cistromics/
 ├── ciscross_VR_1500p_0.05.txt
 
 ```
-Example files are located in the resource/ciscross_examples/ directory. These can be copied into data/cistromics/ for testing the ColdOmics pipeline
-```
----
-### Step 4. Signal Completion
+Example files are located in the `resource/ciscross_examples/` directory. These can be copied into `data/cistromics/` for testing the ColdOmics pipeline.
 
-After placing all files run:
+---
+
+## Step 4. Signal completion
+
+After placing all required files, create a completion marker file:
 
 ```bash
 touch data/cistromics/ciscross.complete
 ```
 
-The snakemake pipeline will wait up to **30 minutes** for these files.
+This file signals that all inputs are ready and the pipeline can proceed. The snakemake pipeline will wait up to **30 minutes** for these files.
 
 ---
 
