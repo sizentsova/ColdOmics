@@ -10,4 +10,4 @@ dependencies:
   - r-readr
   - r-readxl
   - r-vcfR
-  - bioconductor-biomart
+  - r-rvest
