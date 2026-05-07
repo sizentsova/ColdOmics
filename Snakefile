@@ -5,8 +5,9 @@
 rule all:
     input:
         "results/climatomics/Monte-Carlo_permutation_robustTF.csv",
-        "data/cistromics/ciscross.complete"
-
+        "data/cistromics/ciscross.complete",
+        "results/regulomics/Connectivity_network_summary.csv",
+        "results/integrated/robust_TF_multilayer.csv"
 
 ########################################
 # 1. TRANSCRIPTOMICS
@@ -14,8 +15,8 @@ rule all:
 
 rule transcriptomics:
     input:
-        array_dir="data/transcriptomics/microarray",
-        rna_dir="data/transcriptomics/RNA-seq"
+        array="data/transcriptomics/microarray_DEG.rds",
+        rna="data/transcriptomics/rna_DEG.rds"
     output:
         all="results/transcriptomics/all_DEG_logFC.csv",
         final="results/transcriptomics/robustDEG.csv",
@@ -33,7 +34,6 @@ rule transcriptomics:
 # 2. CISTROMICS (Manual data upload)
 ########################################
 
-
 rule prepare_ciscross:
     input:
         deg=expand(
@@ -43,24 +43,26 @@ rule prepare_ciscross:
     output:
         flag="data/cistromics/ciscross.complete"
     message:
-        "Waiting for manual cistromics step (max 30 min)..."
+        "Waiting for manual CisCross step (max 30 min)..."
     shell:
         """
-        for i in {{1..60}}; do
+        for i in $(seq 1 60); do
             if [ -f {output.flag} ]; then
-                echo "Found ciscross.complete"
+                echo "Found CisCross completion flag"
                 exit 0
             fi
-            echo "Waiting for data/cistromics/ciscross.complete... ($i/60)"
+
+            echo "Waiting for CisCross results... ($i/60)"
             sleep 30
         done
 
         echo ""
         echo "Timeout after 30 minutes."
         echo "Please complete manual step:"
-        echo "  touch data/cistromics/ciscross.complete"
+        echo "  touch {output.flag}"
         exit 1
         """
+
 ########################################
 # 2. CISTROMICS (TF enrichment)
 ########################################
@@ -70,7 +72,7 @@ rule cistromics:
         threshold="results/transcriptomics/binomial_threshold.txt",
         count_table="results/transcriptomics/robustDEG.csv",
         ciscross_dir="data/cistromics",
-        flag="data/cistromics/ciscross.complete"
+        flag="data/cistromics/ciscross_TF.complete"
     output:
         tf_enrichment="results/cistromics/tf_cis_enrichment.csv"
     conda:
@@ -78,9 +80,23 @@ rule cistromics:
     script:
         "scripts/2.Cistromics.R"
 
+########################################
+# 3. TF → Network Connectivity
+########################################
+
+rule calculate_connectivity:
+    input:
+        ciscross_dir="data/cistromics"
+    output:
+        connectivity_per_TF="results/regulomics/Connectivity_per_TF.csv",
+        connectivity_network="results/regulomics/Connectivity_network_summary.csv"
+    conda:
+        "envs/r_env.yaml"
+    script:
+        "scripts/3.Regulomics.R"
 
 ########################################
-# 3. TF → GENOMIC REGIONS (BED)
+# 4.1. TF → GENOMIC REGIONS (BED)
 ########################################
 
 rule genomics_bed:
@@ -91,11 +107,11 @@ rule genomics_bed:
     conda:
         "envs/r_env.yaml"
     script:
-        "scripts/3.Extract_TF_regions.R"
+        "scripts/4.Extract_TF_regions.R"
 
 
 ########################################
-# 4. INDEX VCF (required for bcftools)
+# 4.2. INDEX VCF (required for bcftools)
 ########################################
 
 rule index_vcf:
@@ -110,7 +126,7 @@ rule index_vcf:
 
 
 ########################################
-# 5. SUBSET VCF BY TF REGIONS
+# 4.3. SUBSET VCF BY TF REGIONS
 ########################################
 
 rule subset_vcf_by_tf:
@@ -130,7 +146,7 @@ rule subset_vcf_by_tf:
 
 
 ########################################
-# 6. ANNOTATE VARIANTS (VEP)
+# 4.4. ANNOTATE VARIANTS (VEP)
 ########################################
 
 rule annotate_variants:
@@ -148,9 +164,9 @@ rule annotate_variants:
             --cache_version 62 \
             --species arabidopsis_thaliana \
             --vcf \
-            --no-stats \
             --force_overwrite \
             --variant_class \
+            --no_stats \
             --o stdout \
         | filter_vep -filter "IMPACT is HIGH" \
             --o {output.vcf}
@@ -158,7 +174,7 @@ rule annotate_variants:
 
 
 ########################################
-# 7. EXTRACT GENOTYPES (ALT / REF / NA)
+# 4.5. EXTRACT GENOTYPES (ALT / REF / NA)
 ########################################
 
 rule extract_variant_genotypes:
@@ -176,7 +192,7 @@ rule extract_variant_genotypes:
 
 
 ########################################
-# 8. CLIMATOMICS (Monte Carlo test)
+# 5. CLIMATOMICS (Monte Carlo test)
 ########################################
 
 rule climatomics:
@@ -189,3 +205,23 @@ rule climatomics:
         "envs/r_env.yaml"
     script:
         "scripts/5.Climatomics.R"
+
+
+########################################
+# 6. INTEGRATE MULTI-OMICS
+########################################
+
+rule integrate:
+    input:
+        tf_cis="results/cistromics/tf_cis_enrichment.csv",
+        tf_reg="results/regulomics/Connectivity_per_TF.csv",
+        tf_gen="results/genomics/tf_variants_genotype_alt.csv",
+        tf_clima="results/climatomics/Monte-Carlo_permutation_robustTF.csv"
+    output:
+        tf_int="results/integrated/robust_TF_multilayer.csv"
+    conda:
+        "envs/r_env.yaml"
+    script:
+        "scripts/6.Integrate_multi-omics_layers.R"
+
+
