@@ -214,7 +214,7 @@ data/cistromics/
 ```
 Example files are located in the resource/ciscross_examples/ directory. These can be copied into data/cistromics/ for testing the ColdOmics pipeline
 ```
-
+---
 ### Step 4. Signal Completion
 
 After placing all files run:
