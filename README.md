@@ -290,7 +290,7 @@ The snakemake pipeline will wait up to **30 minutes** for these files.
 | Regulomics        | `scripts/4.Regulomics.R`                 |
 | Variant genotypes | `scripts/4.Extract_variant_genotypes.R`  |
 | Climatomics       | `scripts/5.Climatomics.R`                |
-| Integration       | `scripts/Integrate_multi-omics_layers.R` |
+| Integration       | `scripts/6.Integrate_multi-omics_layers.R` |
 
 ---
 
