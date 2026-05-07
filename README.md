@@ -197,23 +197,7 @@ For each response phase:
 
 ### Step 3: Download CisCross Results
 
-For each phase (ER, LR, VR):
-
-#### A. TF Enrichment
-
-From the CisCross website, manually copy the information from the following result tables:
-
-* List of enriched TF on UP genes
-* List of enriched TF on DOWN genes
-  
-#### Instructions:
-
-1. Open each result page in the CisCross output.
-2. Copy the full table content (including all rows and columns) from the website.
-3. Paste the data into a spreadsheet editor (e.g., Excel).
-4. Save each table as a CSV file.
-
-Save all CSV files in the following directory:
+For each phase (ER, LR, VR) save separate Ciscross outputs and place them in the following directory:
 
 ```
 data/cistromics/
@@ -223,35 +207,10 @@ Example structure:
 
 ```
 data/cistromics/
-├── upER.csv
-├── downER.csv
-├── upLR.csv
-├── downLR.csv
-├── upVR.csv
-├── downVR.csv
-```
+├── ciscross_ER_1500p_0.05.txt
+├── ciscross_LR_1500p_0.05.txt
+├── ciscross_VR_1500p_0.05.txt
 
----
-
-#### B. Regulatory Network Results
-
-From the CisCross website, manually copy the information from the following result tables:
-
-* Connected TF regulators
-
-Save as CSV files in:
-
-```
-data/regulomics/
-```
-
-Example structure:
-
-```
-data/regulomics/
-├── ER_network.csv
-├── LR_network.csv
-├── VR_network.csv
 ```
 
 ---
@@ -261,8 +220,7 @@ data/regulomics/
 After placing all files run:
 
 ```bash
-touch data/cistromics/ciscross_TF.complete
-touch data/regulomics/ciscross_network.complete
+touch data/cistromics/ciscross.complete
 ```
 
 The snakemake pipeline will wait up to **30 minutes** for these files.
