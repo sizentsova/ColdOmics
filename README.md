@@ -238,14 +238,14 @@ This file signals that all inputs are ready and the pipeline can proceed. The sn
 
 ## Scripts
 
-| Step              | Script                                   |
-| ----------------- | ---------------------------------------- |
-| Transcriptomics   | `scripts/1.Transcriptomics.R`            |
-| Cistromics        | `scripts/2.Cistromics.R`                 |
-| TF regions        | `scripts/3.Extract_TF_regions.R`         |
-| Regulomics        | `scripts/4.Regulomics.R`                 |
-| Variant genotypes | `scripts/4.Extract_variant_genotypes.R`  |
-| Climatomics       | `scripts/5.Climatomics.R`                |
+| Step              | Script                                     |
+| ----------------- | ------------------------------------------ |
+| Transcriptomics   | `scripts/1.Transcriptomics.R`              |
+| Cistromics        | `scripts/2.Cistromics.R`                   |
+| Regulomics        | `scripts/3.Regulomics.R`                   |
+| TF regions        | `scripts/4.Extract_TF_regions.R`           |
+| Variant genotypes | `scripts/4.Extract_variant_genotypes.R`    |
+| Climatomics       | `scripts/5.Climatomics.R`                  |
 | Integration       | `scripts/6.Integrate_multi-omics_layers.R` |
 
 ---
