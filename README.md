@@ -210,7 +210,6 @@ data/cistromics/
 ├── ciscross_ER_1500p_0.05.txt
 ├── ciscross_LR_1500p_0.05.txt
 ├── ciscross_VR_1500p_0.05.txt
-
 ```
 Example files are located in the `resource/ciscross_examples/` directory. These can be copied into `data/cistromics/` for testing the ColdOmics pipeline.
 
