@@ -1,0 +1,22 @@
+# ColdOmics pipeline configuration
+
+cistromics:
+  # local = run the vendored CisCross engine offline (default)
+  # web   = wait for CisCross web-service reports dropped into data/cistromics/
+  source: local
+
+  # Peak-set collection. Both indices ship in resource/ciscross/index/.
+  #   curated608  CisCross-MACS2, the paper's selection (628 sets / 413 TFs)
+  #   cistrome    Plant Cistrome-GEM, O'Malley et al. 2016 (568 sets / 387 TFs)
+  # Run them separately and intersect; do not pool them into one test.
+  collection: curated608
+
+  # Promoter length in bp upstream of the TSS. Needs a matching index.
+  upstream: 1500
+
+  # Significance threshold for a TF to enter the report.
+  fdr: 0.05
+
+  # Optional gene-list file restricting the enrichment background
+  # (e.g. only expressed genes). Empty = whole genome, as the web service uses.
+  background: ""
