@@ -1,0 +1,13 @@
+# Windows "downloaded from the internet" alternate data streams.
+# These appear as separate files when a Windows download directory is read
+# from WSL or an archiver, and they break `git clone` on Windows because a
+# colon is not a legal filename character there.
+*:Zone.Identifier
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+
+# Snakemake
+.snakemake/
