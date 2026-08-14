@@ -25,8 +25,7 @@ The pipeline consists of the following steps:
 
 ### 2. Cistromics (TF enrichment)
 
-* Runs CisCross **locally and offline** on the DEG sets (no web service, no
-  manual upload)
+* Runs CisCross algorythm (Lavrekha et al., 2022) **locally and offline** on the DEG sets
 * Identifies TFs whose DAP-seq binding is enriched in the DEG promoters
 * Builds the TF→TF regulatory network used by the regulomics step
 
@@ -39,7 +38,7 @@ The pipeline consists of the following steps:
 
 ### 4. Regulomics
 
-* Computes TF connectivity from regulatory networks
+* Computes TF connectivity from regulatory networks for TFs that regulate other TFs.
 
 ### 5. Climatomics
 
