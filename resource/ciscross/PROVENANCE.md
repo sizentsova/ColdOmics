@@ -10,7 +10,7 @@ CisCross web service and without a checkout of the CisCross-local repository.
 | Repository | https://github.com/VictoriaVMironova/CisCross (CisCross-local) |
 | Commit | `641dd554f4ab05ef6fb3fbbbc9de36e8c218a506` (2026-07-29) |
 | Licence | MIT — see the header of `enrichment.R` |
-| Method | Tsukanov et al., *Front. Plant Sci.* 2022, [10.3389/fpls.2022.942710](https://doi.org/10.3389/fpls.2022.942710) |
+| Method | Lavrekha et al., *Front. Plant Sci.* 2022, [10.3389/fpls.2022.942710](https://doi.org/10.3389/fpls.2022.942710) |
 
 ## Contents
 
