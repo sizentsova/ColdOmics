@@ -1,3 +1,31 @@
+configfile: "config.yaml"
+
+########################################
+# CONFIGURATION
+########################################
+
+CIS      = config["cistromics"]
+PHASES   = ["ER", "LR", "VR"]
+CIS_TAG  = "{}p_{}".format(CIS["upstream"], CIS["fdr"])
+CIS_INDEX = "resource/ciscross/index/ciscross_{}_up{}.rds".format(
+    CIS["collection"], CIS["upstream"])
+CIS_REPORTS = expand(
+    "data/cistromics/ciscross_{ph}_" + CIS_TAG + ".txt", ph=PHASES)
+
+# scripts/2.Cistromics.R looks the reports up by their exact file names
+# (see its tf_list block), so the config must produce those names.
+if CIS_TAG != "1500p_0.05":
+    raise ValueError(
+        "scripts/2.Cistromics.R expects reports named "
+        "ciscross_<PHASE>_1500p_0.05.txt, but this config produces "
+        "ciscross_<PHASE>_{}.txt. Either set cistromics.upstream=1500 and "
+        "cistromics.fdr=0.05, or update the tf_list block in "
+        "scripts/2.Cistromics.R to match.".format(CIS_TAG)
+    )
+
+if CIS["source"] not in ("local", "web"):
+    raise ValueError("cistromics.source must be 'local' or 'web'")
+
 ########################################
 # RULE ALL (final target)
 ########################################
@@ -5,7 +33,7 @@
 rule all:
     input:
         "results/climatomics/Monte-Carlo_permutation_robustTF.csv",
-        "data/cistromics/ciscross.complete",
+        CIS_REPORTS,
         "results/regulomics/Connectivity_network_summary.csv",
         "results/integrated/robust_TF_multilayer.csv"
 
@@ -31,37 +59,69 @@ rule transcriptomics:
         "scripts/1.Transcriptomics.R"
 
 ########################################
-# 2. CISTROMICS (Manual data upload)
+# 2a. CISTROMICS INPUT (CisCross reports)
 ########################################
 
-rule prepare_ciscross:
-    input:
-        deg=expand(
-            "results/transcriptomics/{col}.csv",
-            col=["upER","upLR","upVR","downER","downLR","downVR"]
-        )
-    output:
-        flag="data/cistromics/ciscross.complete"
-    message:
-        "Waiting for manual CisCross step (max 30 min)..."
-    shell:
-        """
-        for i in $(seq 1 60); do
-            if [ -f {output.flag} ]; then
-                echo "Found CisCross completion flag"
-                exit 0
-            fi
+if CIS["source"] == "local":
 
-            echo "Waiting for CisCross results... ($i/60)"
-            sleep 30
-        done
+    # Offline CisCross: runs the vendored engine on the step-1 DEG lists and
+    # writes reports in the web service's format. No network access needed.
+    rule ciscross_local:
+        input:
+            upER="results/transcriptomics/upER.csv",
+            downER="results/transcriptomics/downER.csv",
+            upLR="results/transcriptomics/upLR.csv",
+            downLR="results/transcriptomics/downLR.csv",
+            upVR="results/transcriptomics/upVR.csv",
+            downVR="results/transcriptomics/downVR.csv",
+            engine="resource/ciscross/enrichment.R",
+            index=CIS_INDEX
+        output:
+            CIS_REPORTS
+        params:
+            fdr=CIS["fdr"],
+            background=CIS.get("background", "")
+        message:
+            "Running CisCross locally ({}, {} bp promoters)".format(
+                CIS["collection"], CIS["upstream"])
+        conda:
+            "envs/r_env.yaml"
+        script:
+            "scripts/2a.CisCross_local.R"
 
-        echo ""
-        echo "Timeout after 30 minutes."
-        echo "Please complete manual step:"
-        echo "  touch {output.flag}"
-        exit 1
-        """
+else:
+
+    # Manual route: reports downloaded from the CisCross web service and placed
+    # in data/cistromics/ by hand (see README).
+    rule prepare_ciscross:
+        input:
+            deg=expand(
+                "results/transcriptomics/{col}.csv",
+                col=["upER","upLR","upVR","downER","downLR","downVR"]
+            )
+        output:
+            CIS_REPORTS
+        message:
+            "Waiting for manual CisCross step (max 30 min)..."
+        shell:
+            """
+            for i in $(seq 1 60); do
+                if [ -f "{output[0]}" ] && [ -f "{output[1]}" ] \
+                   && [ -f "{output[2]}" ]; then
+                    echo "Found all CisCross reports"
+                    exit 0
+                fi
+
+                echo "Waiting for CisCross results... ($i/60)"
+                sleep 30
+            done
+
+            echo ""
+            echo "Timeout after 30 minutes."
+            echo "Place the CisCross reports in data/cistromics/:"
+            echo "  {output}"
+            exit 1
+            """
 
 ########################################
 # 2. CISTROMICS (TF enrichment)
@@ -72,7 +132,7 @@ rule cistromics:
         threshold="results/transcriptomics/binomial_threshold.txt",
         count_table="results/transcriptomics/robustDEG.csv",
         ciscross_dir="data/cistromics",
-        flag="data/cistromics/ciscross_TF.complete"
+        reports=CIS_REPORTS
     output:
         tf_enrichment="results/cistromics/tf_cis_enrichment.csv"
     conda:
@@ -86,7 +146,8 @@ rule cistromics:
 
 rule calculate_connectivity:
     input:
-        ciscross_dir="data/cistromics"
+        ciscross_dir="data/cistromics",
+        reports=CIS_REPORTS
     output:
         connectivity_per_TF="results/regulomics/Connectivity_per_TF.csv",
         connectivity_network="results/regulomics/Connectivity_network_summary.csv"
