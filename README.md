@@ -166,14 +166,20 @@ resource/ciscross/
 ├── enrichment.R                            # engine (MIT, ~5 KB)
 ├── PROVENANCE.md                           # source commit + rebuild recipe
 └── index/
-    ├── ciscross_curated608_up1500.rds      # CisCross-MACS2   (628 sets / 413 TFs)
+    ├── ciscross_curated608_up500.rds       # CisCross-MACS2, 500-bp promoters
+    ├── ciscross_curated608_up1000.rds      # CisCross-MACS2, 1000-bp promoters
+    ├── ciscross_curated608_up1500.rds      # CisCross-MACS2, 1500-bp promoters
+    ├── ciscross_curated608_up2000.rds      # CisCross-MACS2, 2000-bp promoters
     └── ciscross_cistrome_up1500.rds        # Plant Cistrome-GEM (568 sets / 387 TFs)
 ```
 
-An index is independent of the input gene list, so the same file serves any set
-of DEGs. `rule ciscross_local` writes `data/cistromics/ciscross_{ER,LR,VR}_1500p_0.05.txt`
-in the web service's own format, which `2.Cistromics.R` and `3.Regulomics.R`
-then read unchanged.
+In addition to the 1500-bp default, the repository ships curated608 indices for
+500-, 1000-, and 2000-bp promoters. An index is independent of the input gene
+list, so the same file serves any set of DEGs. `rule ciscross_local` writes
+`data/cistromics/ciscross_{ER,LR,VR}_{upstream}p_{fdr}.txt` in the web service's
+own format. `2.Cistromics.R` and `3.Regulomics.R` consume only the three report
+files selected by Snakemake, so reports from another promoter-length run already
+present in the directory do not interfere.
 
 ### Configuration
 
@@ -183,10 +189,20 @@ Edit `config.yaml`:
 cistromics:
   source: local          # local | web
   collection: curated608 # curated608 | cistrome
-  upstream: 1500
+  upstream: 1500         # curated608: 500 | 1000 | 1500 | 2000
   fdr: 0.05
   background: ""         # optional gene-list file; empty = whole genome
 ```
+
+To repeat the analysis at another promoter length, change only `upstream` to
+`500`, `1000`, or `2000` and rerun Snakemake. The matching local index and report
+names are selected automatically; no R script edits are needed. Standard
+downstream result paths are reused, so archive or redirect results between runs
+when comparing promoter lengths side by side.
+
+The alternative promoter-length indices currently apply to the default
+`curated608` collection. The `cistrome` replication collection currently ships
+only with its 1500-bp index.
 
 ### Choosing a peak-set collection
 

@@ -7,13 +7,7 @@ library(tools)
 # 1. Load CisCross HTML/TXT reports
 # =========================
 
-ciscross_dir <- snakemake@input[["ciscross_dir"]]
-
-report_files <- list.files(
-  ciscross_dir,
-  pattern = "\\.txt$",
-  full.names = TRUE
-)
+report_files <- unname(unlist(snakemake@input[["reports"]]))
 
 # Read HTML reports
 report_html <- lapply(report_files, read_html)
@@ -26,7 +20,14 @@ report_lines <- lapply(report_html, function(x) {
     unlist()
 })
 
-names(report_lines) <- tools::file_path_sans_ext(basename(report_files))
+# Name reports only by response phase. This keeps the downstream analysis
+# independent of promoter length and FDR encoded in the file name.
+report_names <- tools::file_path_sans_ext(basename(report_files))
+report_phases <- sub("^ciscross_(ER|LR|VR)_.*$", "\\1", report_names)
+if (any(!report_phases %in% c("ER", "LR", "VR")) || anyDuplicated(report_phases)) {
+  stop("Expected exactly one CisCross report for each of ER, LR and VR")
+}
+names(report_lines) <- report_phases
 
 # =========================
 # 2. Helper function
@@ -96,15 +97,15 @@ down_tables <- lapply(report_lines, function(lines) {
 
 
 tf_list <- list(
-  
-  downER = down_tables$ciscross_ER_1500p_0.05,
-  upER   = up_tables$ciscross_ER_1500p_0.05,
-  
-  downLR = down_tables$ciscross_LR_1500p_0.05,
-  upLR   = up_tables$ciscross_LR_1500p_0.05,
-  
-  downVR = down_tables$ciscross_VR_1500p_0.05,
-  upVR   = up_tables$ciscross_VR_1500p_0.05
+
+  downER = down_tables$ER,
+  upER   = up_tables$ER,
+
+  downLR = down_tables$LR,
+  upLR   = up_tables$LR,
+
+  downVR = down_tables$VR,
+  upVR   = up_tables$VR
 )
 
 tf_list <- lapply(tf_list, function(dt) {
