@@ -17,7 +17,10 @@ CisCross web service and without a checkout of the CisCross-local repository.
 | Path | Origin |
 |---|---|
 | `enrichment.R` | verbatim copy of `R/enrichment.R` |
+| `index/ciscross_curated608_up500.rds` | `Rscript R/build_index.R 500 curated608` |
+| `index/ciscross_curated608_up1000.rds` | `Rscript R/build_index.R 1000 curated608` |
 | `index/ciscross_curated608_up1500.rds` | `Rscript R/build_index.R 1500 curated608` |
+| `index/ciscross_curated608_up2000.rds` | `Rscript R/build_index.R 2000 curated608` |
 | `index/ciscross_cistrome_up1500.rds` | `Rscript R/build_index.R 1500 cistrome` |
 
 Nothing else from CisCross-local is needed at run time: `enrichment.R` imports
@@ -49,8 +52,9 @@ peak-calling pipelines. Run them **separately** and intersect the results as a
 robustness check — do not pool them into one test, which would double-count
 each TF while inflating the multiple-testing correction.
 
-Promoters are 1500 bp upstream of the TSS (strand-aware), the length that
-aligns most closely with the web service.
+Promoters are defined upstream of the TSS in a strand-aware manner. The default
+1500-bp setting aligns most closely with the web service; curated608 indices for
+500, 1000 and 2000 bp support promoter-length sensitivity analysis.
 
 ## Rebuilding
 
@@ -61,7 +65,22 @@ Rscript R/build_index.R 1500 curated608
 Rscript R/build_index.R 1500 cistrome
 ```
 
-Other promoter lengths (500 / 1000 / 2000 / 2500) build the same way. Note that
-`scripts/2.Cistromics.R` hardcodes the `1500p_0.05` report names, so changing
-`cistromics.upstream` or `cistromics.fdr` in `config.yaml` also requires
-updating the `tf_list` block in that script.
+The vendored sensitivity-analysis indices were built with:
+
+```bash
+Rscript R/build_index.R 500 curated608
+Rscript R/build_index.R 1000 curated608
+Rscript R/build_index.R 2000 curated608
+```
+
+ColdOmics derives report names from `config.yaml`; changing
+`cistromics.upstream` or `cistromics.fdr` no longer requires R script edits.
+
+## SHA-256 checksums
+
+| Index | SHA-256 |
+|---|---|
+| `ciscross_curated608_up500.rds` | `d0a0af510a53abdcca75d8f806bf892e6e90242c1dabff5f1812f29bad7633f4` |
+| `ciscross_curated608_up1000.rds` | `865c3ae8e84230c88fdbe6ca902282f5faa73bda61baa420606953e5752fa2eb` |
+| `ciscross_curated608_up1500.rds` | `71a5f91640b30e7cd87ae257257034d5df2f3089d41d30a55c7c815234942e85` |
+| `ciscross_curated608_up2000.rds` | `dbc2d6a9e70db019f6453a9fe57367bc6da121561e81f23b3188a566bf776a59` |

@@ -12,15 +12,17 @@ CIS_INDEX = "resource/ciscross/index/ciscross_{}_up{}.rds".format(
 CIS_REPORTS = expand(
     "data/cistromics/ciscross_{ph}_" + CIS_TAG + ".txt", ph=PHASES)
 
-# scripts/2.Cistromics.R looks the reports up by their exact file names
-# (see its tf_list block), so the config must produce those names.
-if CIS_TAG != "1500p_0.05":
+SUPPORTED_UPSTREAM = {
+    "curated608": (500, 1000, 1500, 2000),
+    "cistrome": (1500,),
+}
+if CIS["collection"] not in SUPPORTED_UPSTREAM:
+    raise ValueError("cistromics.collection must be 'curated608' or 'cistrome'")
+if CIS["upstream"] not in SUPPORTED_UPSTREAM[CIS["collection"]]:
     raise ValueError(
-        "scripts/2.Cistromics.R expects reports named "
-        "ciscross_<PHASE>_1500p_0.05.txt, but this config produces "
-        "ciscross_<PHASE>_{}.txt. Either set cistromics.upstream=1500 and "
-        "cistromics.fdr=0.05, or update the tf_list block in "
-        "scripts/2.Cistromics.R to match.".format(CIS_TAG)
+        "unsupported promoter length {} for {}; available: {}".format(
+            CIS["upstream"], CIS["collection"],
+            ", ".join(map(str, SUPPORTED_UPSTREAM[CIS["collection"]])))
     )
 
 if CIS["source"] not in ("local", "web"):

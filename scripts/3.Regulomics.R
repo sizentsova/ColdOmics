@@ -8,14 +8,7 @@ library(tools)
 # 1. Load CisCross HTML/TXT reports
 # =========================
 
-ciscross_dir <- snakemake@input[["ciscross_dir"]]
-
-
-report_files <- list.files(
-  ciscross_dir,
-  pattern = "\\.txt$",
-  full.names = TRUE
-)
+report_files <- unname(unlist(snakemake@input[["reports"]]))
 
 # Read HTML reports
 report_html <- lapply(report_files, read_html)
@@ -28,7 +21,12 @@ report_lines <- lapply(report_html, function(x) {
     unlist()
 })
 
-names(report_lines) <- tools::file_path_sans_ext(basename(report_files))
+report_names <- tools::file_path_sans_ext(basename(report_files))
+report_phases <- sub("^ciscross_(ER|LR|VR)_.*$", "\\1", report_names)
+if (any(!report_phases %in% c("ER", "LR", "VR")) || anyDuplicated(report_phases)) {
+  stop("Expected exactly one CisCross report for each of ER, LR and VR")
+}
+names(report_lines) <- report_phases
 
 # =========================
 # 2. Helper function
@@ -84,8 +82,7 @@ regulation_tables <- lapply(report_lines, function(lines) {
 # 4. Name tables by file
 # =========================
 
-names(regulation_tables) <- c("ER", "LR", "VR")
-labels <- c("ER", "LR", "VR")
+names(regulation_tables) <- report_phases
 
 # =========================
 # 5. Combine + annotate
