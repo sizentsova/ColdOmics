@@ -28,17 +28,17 @@ The pipeline consists of the following steps:
 * Runs CisCross algorithm (Lavrekha et al., 2022) **locally and offline** on the DEG sets
 * Identifies TFs whose DAP-seq binding is enriched in the DEG promoters
 * Builds the TF→TF regulatory network used by the regulomics step
+  
+### 3. Regulomics
 
-### 3. Genomics
+* Computes TF connectivity from regulatory networks for TFs that regulate other TFs.
+
+### 4. Genomics
 
 * Extracts TF genomic regions (BED)
 * Subsets variants from 1001 Genomes VCF
 * Annotates variants using VEP
 * Extracts genotype matrices (ALT / REF / NA)
-
-### 4. Regulomics
-
-* Computes TF connectivity from regulatory networks for TFs that regulate other TFs.
 
 ### 5. Climatomics
 
