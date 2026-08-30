@@ -312,7 +312,7 @@ write_robustDEG <- function(dt, k_cut, out) {
   
   cols <- setdiff(names(dt), "TAIR_ID")
   
-  lapply(seq_along(cols), function(i) {
+  invisible(lapply(seq_along(cols), function(i) {
     
     col <- cols[i]
     key <- gsub("up|down", "", col)
@@ -323,7 +323,7 @@ write_robustDEG <- function(dt, k_cut, out) {
       out[i], 
       sep = ","
     )
-  })
+  }))
 }
 
 write_robustDEG(robust_dt, k_thresh, snakemake@output[["deg"]])

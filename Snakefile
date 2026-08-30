@@ -35,7 +35,7 @@ if CIS["source"] not in ("local", "web"):
 rule all:
     input:
         "results/climatomics/Monte-Carlo_permutation_robustTF.csv",
-        CIS_REPORTS,
+         CIS_REPORTS,
         "results/regulomics/Connectivity_network_summary.csv",
         "results/integrated/robust_TF_multilayer.csv"
 
@@ -93,8 +93,8 @@ if CIS["source"] == "local":
 
 else:
 
-    # Manual route: reports downloaded from the CisCross web service and placed
-    # in data/cistromics/ by hand (see README).
+    # Manual route: reports downloaded from the CisCross web service
+    # and placed in data/cistromics/ by hand.
     rule prepare_ciscross:
         input:
             deg=expand(
@@ -102,14 +102,15 @@ else:
                 col=["upER","upLR","upVR","downER","downLR","downVR"]
             )
         output:
-            CIS_REPORTS
+            reports=CIS_REPORTS
         message:
             "Waiting for manual CisCross step (max 30 min)..."
         shell:
-            """
+            r"""
             for i in $(seq 1 60); do
-                if [ -f "{output[0]}" ] && [ -f "{output[1]}" ] \
-                   && [ -f "{output[2]}" ]; then
+                if [ -f "{output.reports[0]}" ] && \
+                   [ -f "{output.reports[1]}" ] && \
+                   [ -f "{output.reports[2]}" ]; then
                     echo "Found all CisCross reports"
                     exit 0
                 fi
@@ -118,10 +119,11 @@ else:
                 sleep 30
             done
 
-            echo ""
             echo "Timeout after 30 minutes."
-            echo "Place the CisCross reports in data/cistromics/:"
-            echo "  {output}"
+            echo "Expected files:"
+            echo "  {output.reports[0]}"
+            echo "  {output.reports[1]}"
+            echo "  {output.reports[2]}"
             exit 1
             """
 

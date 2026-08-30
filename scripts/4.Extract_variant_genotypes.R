@@ -1,5 +1,10 @@
-library(vcfR)
-library(data.table)
+
+
+suppressPackageStartupMessages({
+  library('vcfR')
+  library('data.table')
+})
+
 
 # =========================================================
 # Load VCF and BED annotation

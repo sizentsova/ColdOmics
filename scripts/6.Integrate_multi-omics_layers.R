@@ -10,6 +10,11 @@ tf_reg   <- fread(snakemake@input[["tf_reg"]])
 tf_gen   <- fread(snakemake@input[["tf_gen"]])
 tf_clima <- fread(snakemake@input[["tf_clima"]])
 
+tf_cis <- fread('results/cistromics/tf_cis_enrichment.csv')
+tf_reg <- fread('results/regulomics/Connectivity_per_TF.csv')
+tf_gen <- fread('results/genomics/tf_variants_genotype_alt.csv')
+tf_clima <- fread('results/climatomics/Monte-Carlo_permutation_robustTF.csv')
+
 # =========================
 # 2. Filter climatomics
 # =========================
@@ -60,11 +65,13 @@ ara_genes <- ara_genes[ ,.(TAIR_ID, GeneName)]
 # =========================
 
 final_tf_table <- merge(
-  ara_genes,
   tf_summary,
+  ara_genes,
   by = "TAIR_ID",
-  all = TRUE
+  all.x = T
 )
+
+setcolorder(final_tf_table, c('TAIR_ID', 'GeneName'))
 
 # =========================
 # 9. Save
